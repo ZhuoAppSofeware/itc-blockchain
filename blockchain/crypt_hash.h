@@ -17,9 +17,9 @@
 //struct
 struct hash_t
 {
-	int8 trits[HASH_TRITSLENGTH];//(-1,0,1)
-	int8 byte[HASH_BYTELENGTH];//
-	int8 tryte[HASH_TRYTELENGTH];//string
+	//int8 trits[HASH_TRITSLENGTH];//(-1,0,1)
+	//int8 byte[HASH_BYTELENGTH];//
+	//int8 tryte[HASH_TRYTELENGTH];//string
 	int32 code;//hash code
 };
 //function

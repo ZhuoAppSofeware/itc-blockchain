@@ -89,6 +89,10 @@ SOURCE=.\blockchain.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\crypt_bignum.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\crypt_crc32.cpp
 # End Source File
 # Begin Source File
@@ -101,11 +105,19 @@ SOURCE=.\crypt_hash.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\crypt_rsa.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\crypt_sha256.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\include.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\layer.cpp
 # End Source File
 # Begin Source File
 
@@ -129,6 +141,10 @@ SOURCE=.\blockchain.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\crypt_bignum.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\crypt_crc32.h
 # End Source File
 # Begin Source File
@@ -141,11 +157,19 @@ SOURCE=.\crypt_hash.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\crypt_rsa.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\crypt_sha256.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\include.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\layer.h
 # End Source File
 # Begin Source File
 

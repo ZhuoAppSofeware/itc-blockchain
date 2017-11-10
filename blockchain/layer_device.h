@@ -1,19 +1,17 @@
 #pragma once
 
 //include
-#include "include.h"
+#include "layer.h"
 //define
 #define DEVICE_STATUS_FREE 0
 #define DEVICE_STATUS_MASTER 1
 #define DEVICE_STATUS_SLAVE 2
 
+#define DEVICE_NODE_HEAVY 0
+#define DEVICE_NODE_LIGHT 1
+
 #define DEVICE_LINE_ON 0
 #define DEVICE_LINE_OFF 1
-
-#define INFO_TX 0
-#define INFO_RX 1
-#define INFO_DONE 2
-#define INFO_TRANSACTION 3
 
 #define MAX_MASTER_SLAVE 5 //maybe 7
 #define MIN_MASTER_SLAVE 3

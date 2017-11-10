@@ -7,8 +7,6 @@ extern CRITICAL_SECTION g_cs;
 extern device_t *g_device;//设备数组
 extern volatile uint8 g_task;//传递给线程的过程标记
 extern volatile uint8 *g_init;//每个线程的初始化任务.0-未初始化,1-已初始化
-//extern volatile uint32 *g_infotype;//每个线程的通讯缓冲区类型标记(当前使用1字节).0-主动发送连接,1-被动接收连接
-//extern volatile uint32 *g_infodata;//每个线程的通讯缓冲区数据(当前使用1字).设备索引
 
 void route_insert(device_t *device,route_t *route)
 {
