@@ -1,5 +1,6 @@
 #include "layer_dag.h"
 
+extern uint32 g_devicenum;//设备个数
 extern volatile uint8 g_task;//传递给线程的过程标记
 extern volatile uint32 g_index;//临时用来统计交易号码的(以后会用hash_t代替,计数从1开始)
 extern CRITICAL_SECTION g_cs;
@@ -212,7 +213,7 @@ uint8 transaction_generate(device_t *device,uint32 *pow)
 	route_t *route;
 	transaction_t transaction;
 
-	if (device->transaction_index==TRANSACTION_LENGTH)//transaction array full
+	if (device->transaction_index==TRANSACTION_LENGTH)//transaction full
 		return RET_TRANSACTION_FULL;
 	if (device->queue_index==QUEUE_LENGTH)//queue full
 		return RET_QUEUE_FULL;
@@ -269,7 +270,7 @@ uint8 transaction_recv(device_t *device)
 			break;
 	if (i==device->queue_index)//no transaction in queue
 		return RET_TRANSACTION_NONE;
-	if (device->transaction_index==TRANSACTION_LENGTH)//transaction array full
+	if (device->transaction_index==TRANSACTION_LENGTH)//transaction full
 		return RET_TRANSACTION_FULL;
 	//update transaction
 	memcpy(&device->transaction[device->transaction_index],(void *)device->queue[i].buffer,sizeof(transaction_t));
@@ -289,9 +290,9 @@ uint8 tangle_join(device_t *device,uint32 trunk,uint32 branch)
 	uint32 i;
 	route_t *route;
 	
-	if (!device->transaction_index)//transaction array empty
+	if (!device->transaction_index)//transaction empty
 		return RET_TRANSACTION_EMPTY;
-	if (device->tangle_index==TANGLE_LENGTH)//tangle array full
+	if (device->tangle_index==TANGLE_LENGTH)//tangle full
 		return RET_TANGLE_FULL;
 	//join tangle
 	memcpy(&device->tangle[device->tangle_index],&device->transaction[0],sizeof(transaction_t));
@@ -328,6 +329,27 @@ uint8 tangle_join(device_t *device,uint32 trunk,uint32 branch)
 	return 0;
 }
 
+uint8 tangle_check(void)
+{
+	//检查各设备的tangle是否一致
+	uint32 i,j,k,r;
+
+	for (i=0;i<g_devicenum;i++)
+		if (g_device[i].dag_index)
+		{
+			for (j=i+1;j<g_devicenum;j++)
+				if (g_device[i].dag_index==g_device[j].dag_index)
+				{
+					r=math_min(g_device[i].tangle_index,g_device[j].tangle_index);
+					for (k=0;k<r;k++)
+						if (g_device[i].tangle[k].device_index!=g_device[j].tangle[k].device_index || memcmp(&g_device[i].tangle[k].index,&g_device[j].tangle[k].index,sizeof(hash_t)) || memcmp(&g_device[i].tangle[k].trunk,&g_device[j].tangle[k].trunk,sizeof(hash_t)) || memcmp(&g_device[i].tangle[k].branch,&g_device[j].tangle[k].branch,sizeof(hash_t)))
+							return 1;
+				}
+		}
+
+	return 0;
+}
+
 uint8 tangle_check(device_t *device,transaction_t *transaction)
 {
 	//检查tangle中是否有存在参照的transaction
@@ -336,7 +358,7 @@ uint8 tangle_check(device_t *device,transaction_t *transaction)
 	if (!device->tangle_index)//tangle empty
 		return 0;
 	for (i=0;i<device->tangle_index;i++)
-		if (!memcmp(&device->tangle[i].index,&transaction->index,sizeof(hash_t)))
+		if (!memcmp((void *)&device->tangle[i].index,&transaction->index,sizeof(hash_t)))
 			break;
 	if (i==device->tangle_index)//no same transaction in tangle
 		return 1;
@@ -351,7 +373,7 @@ uint8 tangle_recv(device_t *device)
 
 	if (!device->queue_index)//queue empty
 		return RET_QUEUE_EMPTY;
-	if (device->tangle_index==TANGLE_LENGTH)//tangle array full
+	if (device->tangle_index==TANGLE_LENGTH)//tangle full
 		return RET_TANGLE_FULL;
 	for (i=0;i<device->queue_index;i++)
 		if (device->queue[i].info==INFO_TANGLE)
@@ -449,14 +471,19 @@ uint8 process_dag(device_t *device)
 				//	print_return(device,task,flag);
 				LeaveCriticalSection(&g_cs);
 				break;
+			case 4:
+				EnterCriticalSection(&g_cs);
+				tangle_check();
+				LeaveCriticalSection(&g_cs);
+				break;
 			}
 			//EnterCriticalSection(&g_cs);
 			//printf("thread_device%ld task=%d\r\n",device->device_index,task);
 			//LeaveCriticalSection(&g_cs);
 			task++;
-			if (task==4)
+			if (task==5)
 				task=0;
-			//Sleep(3000);
+			//Sleep(10);
 			//while(1);
 		}
 		break;
