@@ -18,10 +18,16 @@ CString g_string[9]={"none","device_initial","device_connect","device_merge","de
 //Ö÷Á´Ïß³Ì
 uint32 WINAPI thread_mainchain(PVOID pParam)
 {
-	EnterCriticalSection(&g_cs);
-	//printf("initial thread_mainchain pass\r\n");
-	LeaveCriticalSection(&g_cs);
-	while(1);
+	device_t *device;
+
+	device=(device_t *)pParam;
+	while(1)
+	{
+		process_mainchain(device);
+		EnterCriticalSection(&g_cs);
+		//printf("initial thread_mainchain pass\r\n");
+		LeaveCriticalSection(&g_cs);
+	}
 
 	return 0;
 }

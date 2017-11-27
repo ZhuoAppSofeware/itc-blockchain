@@ -129,6 +129,10 @@ SOURCE=.\layer_device.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\layer_mainchain.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\math_tryte.cpp
 # End Source File
 # End Group
@@ -178,6 +182,10 @@ SOURCE=.\layer_dag.h
 # Begin Source File
 
 SOURCE=.\layer_device.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\layer_mainchain.h
 # End Source File
 # Begin Source File
 
